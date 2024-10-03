@@ -99,7 +99,7 @@ async def handle_channels_editor(call: types.CallbackQuery):
         await call.answer()
     else:
         text += 'Нет активных каналов'
-        await try_edit_call(call, text, channels_markup())
+        await try_edit_call(call, text, await channels_markup())
         await call.answer()
 
 @i_router.callback_query(F.data.startswith("page_"))
@@ -268,7 +268,8 @@ async def navigate_posts(call: types.CallbackQuery):
     await call.message.edit_text(text, reply_markup=keyboard, parse_mode="MarkdownV2")
 
 @i_router.callback_query(F.data == 'back_editor')
-async def handle_back_editor(call: types.CallbackQuery):
+async def handle_back_editor(call: types.CallbackQuery, state:FSMContext):
+    await state.clear()
     await try_edit_call(call, 'Главное меню', main_menu)
     await call.answer()
 
