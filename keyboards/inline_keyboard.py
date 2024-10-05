@@ -15,7 +15,8 @@ add_back = InlineKeyboardMarkup(inline_keyboard=[
 def third_party_markup(post_id):
     third_party_post = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='Редактировать', callback_data=f'np_edit_{post_id}')],
-        [InlineKeyboardButton(text='Удалить', callback_data=f'np_delete_{post_id}')]
+        [InlineKeyboardButton(text='Удалить', callback_data=f'np_delete_{post_id}')],
+        [InlineKeyboardButton(text='Назад', callback_data='npback')]
     ])
     return third_party_post
 

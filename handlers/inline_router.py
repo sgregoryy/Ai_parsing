@@ -125,22 +125,23 @@ async def handle_new_channel(message: types.Message, state: FSMContext):
     response, data = await join_channel(message.text)
     # print(data.chats[0].id)
     if response == 'success':
-        
         channel_id = data.chats[0].id
         channel_name = data.chats[0].title
         print(channel_id, channel_name)
         # chat = await bot.get_chat(chat_id='-100'+str(channel_id))
-        await insert_new_channel(channel_id, 'https://t.me/c/' + str(channel_id), channel_name, 'Активный')
-        await message.answer('Бот успешно вступил в канал!', reply_markup=main_menu)
-        await state.clear()
-
+        try:
+            await insert_new_channel(channel_id, 'https://t.me/c/' + str(channel_id), channel_name, 'Активный')
+            await message.answer('Бот успешно вступил в канал!', reply_markup=await channels_markup())
+            await state.clear()
+        except:
+            await message.answer('Этот канал уже есть в списке', reply_markup=await channels_markup())
     elif response == 'request':
         # await insert_new_channel(None,  None, message.text, 'Заявка')
-        await message.answer('Бот успешно отправил заявку на вступление в канал', reply_markup=main_menu)
+        await message.answer('Бот успешно отправил заявку на вступление в канал', reply_markup=await channels_markup())
         await state.clear()
     
     else:
-        await message.answer(f'Произошла ошибка при вступлении в канал. {response}', reply_markup=main_menu)
+        await message.answer(f'Произошла ошибка при вступлении в канал. {response}', reply_markup=await channels_markup())
         await state.clear()
 
 @i_router.callback_query(F.data == 'pub_channels')
@@ -348,3 +349,8 @@ async def navigate_archive_posts(call: types.CallbackQuery):
     
     await call.message.edit_text(text, reply_markup=keyboard, parse_mode="MarkdownV2")
 
+
+@i_router.callback_query(F.data == 'npback')
+async def handle_np_back(call: types.CallbackQuery):
+    await try_edit_call(call, call.message.text, None)
+    await call.message.answer('Главное меню', reply_markup=main_menu)
